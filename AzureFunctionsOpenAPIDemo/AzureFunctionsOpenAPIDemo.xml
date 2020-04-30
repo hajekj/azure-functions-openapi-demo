@@ -1,0 +1,670 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>AzureFunctionsOpenAPIDemo</name>
+    </assembly>
+    <members>
+        <member name="M:AzureFunctionsOpenAPIDemo.PetApi.AddPet(Microsoft.AspNetCore.Http.HttpRequest,Microsoft.Extensions.Logging.ILogger)">
+            <summary>
+            Add a new pet to the store
+            </summary>
+            <group>PetApi</group>
+            <verb>POST</verb>
+            <url>http://localhost:7071/api/v2/AddPet</url>
+            <param name="postBody" in="body"><see cref="T:IO.Swagger.Models.Pet"/>Sample object</param>
+            <response code="405">Invalid input</response>
+        </member>
+        <member name="M:AzureFunctionsOpenAPIDemo.PetApi.DeletePet(Microsoft.AspNetCore.Http.HttpRequest,Microsoft.Extensions.Logging.ILogger,System.Nullable{System.Int64})">
+            <summary>
+            Deletes a pet
+            </summary>
+            <group>PetApi</group>
+            <verb>DELETE</verb>
+            <url>http://localhost:7071/api/v2/DeletePet/{petId}</url>
+            <param name="petId" cref="T:System.Int64" in="path">Pet id to delete</param>
+            <param name="apiKey" cref="T:System.String" in="header">Api Key</param>
+            <response code="400">Invalid pet value</response>
+        </member>
+        <member name="M:AzureFunctionsOpenAPIDemo.PetApi.FindPetsByStatus(Microsoft.AspNetCore.Http.HttpRequest,Microsoft.Extensions.Logging.ILogger)">
+            <summary>
+            Finds Pets by status
+            </summary>
+            <group>PetApi</group>
+            <verb>GET</verb>
+            <url>http://localhost:7071/api/v2/pet/findByStatus</url>
+            <remarks>Multiple status values can be provided with comma separated strings</remarks>
+            <param name="status" cref="T:System.String" in="query">Status values that need to be considered for filter</param>
+            <response code="200"><see cref="T:System.Collections.Generic.List`1"/>where T is <see cref="T:IO.Swagger.Models.Pet"/>successful operation</response>
+            <response code="400">Invalid status value</response>
+        </member>
+        <member name="M:AzureFunctionsOpenAPIDemo.PetApi.FindPetsByTags(Microsoft.AspNetCore.Http.HttpRequest,Microsoft.Extensions.Logging.ILogger)">
+            <summary>
+            Finds Pets by tags
+            </summary>
+            <group>PetApi</group>
+            <verb>GET</verb>
+            <url>http://localhost:7071/api/v2/pet/findByTags</url>
+            <remarks>Multiple tags can be provided with comma separated strings. Use tag1, tag2, tag3 for testing.</remarks>
+            <param name="tags">Tags to filter by</param>
+            <response code="200"><see cref="T:System.Collections.Generic.List`1"/>where T is <see cref="T:IO.Swagger.Models.Pet"/>successful operation</response>
+            <response code="400">Invalid tag value</response>
+        </member>
+        <member name="M:AzureFunctionsOpenAPIDemo.PetApi.GetPetById(Microsoft.AspNetCore.Http.HttpRequest,Microsoft.Extensions.Logging.ILogger,System.Nullable{System.Int64})">
+            <summary>
+            Find pet by ID
+            </summary>
+            <remarks>Returns a single pet</remarks>
+            <group>PetApi</group>
+            <verb>GET</verb>
+            <url>http://localhost:7071/api/v2/pet/{petId}</url>
+            <param name="petId" cref="T:System.Int64" in="path">Pet id to delete</param>
+            <response code="200"><see cref="T:IO.Swagger.Models.Pet"/>successful operation</response>
+            <response code="400">Invalid ID supplied</response>
+            <response code="404">Pet not found</response>
+        </member>
+        <member name="M:AzureFunctionsOpenAPIDemo.PetApi.UpdatePet(Microsoft.AspNetCore.Http.HttpRequest,Microsoft.Extensions.Logging.ILogger)">
+            <summary>
+            Update an existing pet
+            </summary>
+            <group>PetApi</group>
+            <verb>PUT</verb>
+            <url>http://localhost:7071/api/v2/pet</url>
+            <param name="postBody" in="body"><see cref="T:IO.Swagger.Models.Pet"/>Pet object that needs to be added to the store</param>
+            <response code="400">Invalid ID supplied</response>
+            <response code="404">Pet not found</response>
+            <response code="405">Validation exception</response>
+        </member>
+        <member name="M:AzureFunctionsOpenAPIDemo.PetApi.UpdatePetWithForm(Microsoft.AspNetCore.Http.HttpRequest,Microsoft.Extensions.Logging.ILogger,System.Nullable{System.Int64})">
+            <summary>
+            Updates a pet in the store with form data
+            </summary>
+            <group>PetApi</group>
+            <verb>POST</verb>
+            <url>http://localhost:7071/api/v2/pet/{petId}</url>
+            <param name="petId" cref="T:System.Int64" in="path">ID of pet that needs to be updated</param>
+            <param name="formData" in="body" type="application/x-www-form-urlencoded"><see cref="T:AzureFunctionsOpenAPIDemo.ViewModel.PetForm"/>Updated name of the pet</param>
+            <response code="405">Invalid input</response>
+        </member>
+        <member name="M:AzureFunctionsOpenAPIDemo.PetApi.UploadFile(Microsoft.AspNetCore.Http.HttpRequest,Microsoft.Extensions.Logging.ILogger,System.Nullable{System.Int64})">
+            <summary>
+            uploads an image
+            </summary>
+            <group>PetApi</group>
+            <verb>POST</verb>
+            <url>http://localhost:7071/api/v2/pet/{petId}/uploadImage</url>
+            <param name="petId" cref="T:System.Int64" in="path">ID of pet that needs to be updated</param>
+            <param name="formData" in="body" type="application/x-www-form-urlencoded"><see cref="T:AzureFunctionsOpenAPIDemo.ViewModel.PetUploadFileForm"/>Updated name of the pet</param>
+            <response code="200"><see cref="T:IO.Swagger.Models.ApiResponse"/>successful operation</response>
+        </member>
+        <member name="T:AzureFunctionsOpenAPIDemo.Security">
+            <summary>
+            Web config.
+            </summary>
+            <security type="http" name="http-bearer">
+                <description>Test security</description>
+                <scheme>bearer</scheme>
+                <bearerFormat>JWT</bearerFormat>
+            </security>
+            <security type="oauth2" name="oauth">
+                <description>Test security</description>
+                <flow type="implicit">
+                    <authorizationUrl>https://example.com/api/oauth/dialog</authorizationUrl>
+                    <refreshUrl>https://example.com/api/oauth/dialog</refreshUrl>
+                    <scope name="scope1">
+                        <description>scope1</description>
+                    </scope>
+                </flow>
+                <flow type="password">
+                    <tokenUrl>https://example.com/api/oauth/dialog</tokenUrl>
+                    <refreshUrl>https://example.com/api/oauth/dialog</refreshUrl>
+                    <scope name="scope1">
+                        <description>scope1</description>
+                    </scope>
+                </flow>
+                <flow type="authorizationCode">
+                    <authorizationUrl>https://example.com/api/oauth/dialog</authorizationUrl>
+                    <tokenUrl>https://example.com/api/oauth/dialog</tokenUrl>
+                    <refreshUrl>https://example.com/api/oauth/dialog</refreshUrl>
+                    <scope name="scope1">
+                        <description>scope1</description>
+                    </scope>
+                </flow>
+                <flow type="clientCredentials">
+                    <tokenUrl>https://example.com/api/oauth/dialog</tokenUrl>
+                    <refreshUrl>https://example.com/api/oauth/dialog</refreshUrl>
+                    <scope name="scope1">
+                        <description>scope1</description>
+                    </scope>
+                </flow>
+            </security>
+            <security type="openIdConnect" name="openIdConnect">
+                <description>Test security</description>
+                <openIdConnectUrl>https://example.com/api/oauth/dialog</openIdConnectUrl>
+                <scope name="scope1">
+                    <description>Scope 1 description</description>    
+                </scope>
+                <scope name="scope2">
+                    <description>Scope 2 description</description>    
+                </scope>
+            </security>
+        </member>
+        <member name="T:AzureFunctionsOpenAPIDemo.ViewModel.PetForm">
+            <summary>
+            A pet ViewModel for form post
+            </summary>
+        </member>
+        <member name="P:AzureFunctionsOpenAPIDemo.ViewModel.PetForm.Name">
+            <summary>
+            Gets or Sets Name
+            </summary>
+        </member>
+        <member name="P:AzureFunctionsOpenAPIDemo.ViewModel.PetForm.Status">
+            <summary>
+            pet status in the store
+            </summary>
+            <value>pet status in the store</value>
+        </member>
+        <member name="T:AzureFunctionsOpenAPIDemo.ViewModel.PetUploadFileForm">
+            <summary>
+            A pet ViewModel for upload image form post
+            </summary>
+        </member>
+        <member name="P:AzureFunctionsOpenAPIDemo.ViewModel.PetUploadFileForm.AdditionalMetadata">
+            <summary>
+            Additional data to pass to server
+            </summary>
+        </member>
+        <member name="P:AzureFunctionsOpenAPIDemo.ViewModel.PetUploadFileForm.File">
+            <summary>
+            file to upload
+            </summary>
+        </member>
+        <member name="T:IO.Swagger.Models.Amount">
+            <summary>
+            some description 
+            </summary>
+        </member>
+        <member name="P:IO.Swagger.Models.Amount.Value">
+            <summary>
+            some description 
+            </summary>
+            <value>some description </value>
+        </member>
+        <member name="P:IO.Swagger.Models.Amount.Currency">
+            <summary>
+            Gets or Sets Currency
+            </summary>
+        </member>
+        <member name="M:IO.Swagger.Models.Amount.ToString">
+            <summary>
+            Returns the string presentation of the object
+            </summary>
+            <returns>String presentation of the object</returns>
+        </member>
+        <member name="M:IO.Swagger.Models.Amount.ToJson">
+            <summary>
+            Returns the JSON string presentation of the object
+            </summary>
+            <returns>JSON string presentation of the object</returns>
+        </member>
+        <member name="M:IO.Swagger.Models.Amount.Equals(System.Object)">
+            <summary>
+            Returns true if objects are equal
+            </summary>
+            <param name="obj">Object to be compared</param>
+            <returns>Boolean</returns>
+        </member>
+        <member name="M:IO.Swagger.Models.Amount.Equals(IO.Swagger.Models.Amount)">
+            <summary>
+            Returns true if Amount instances are equal
+            </summary>
+            <param name="other">Instance of Amount to be compared</param>
+            <returns>Boolean</returns>
+        </member>
+        <member name="M:IO.Swagger.Models.Amount.GetHashCode">
+            <summary>
+            Gets the hash code
+            </summary>
+            <returns>Hash code</returns>
+        </member>
+        <member name="T:IO.Swagger.Models.ApiResponse">
+            <summary>
+            Describes the result of uploading an image resource
+            </summary>
+        </member>
+        <member name="P:IO.Swagger.Models.ApiResponse.Code">
+            <summary>
+            Gets or Sets Code
+            </summary>
+        </member>
+        <member name="P:IO.Swagger.Models.ApiResponse.Type">
+            <summary>
+            Gets or Sets Type
+            </summary>
+        </member>
+        <member name="P:IO.Swagger.Models.ApiResponse.Message">
+            <summary>
+            Gets or Sets Message
+            </summary>
+        </member>
+        <member name="M:IO.Swagger.Models.ApiResponse.ToString">
+            <summary>
+            Returns the string presentation of the object
+            </summary>
+            <returns>String presentation of the object</returns>
+        </member>
+        <member name="M:IO.Swagger.Models.ApiResponse.ToJson">
+            <summary>
+            Returns the JSON string presentation of the object
+            </summary>
+            <returns>JSON string presentation of the object</returns>
+        </member>
+        <member name="M:IO.Swagger.Models.ApiResponse.Equals(System.Object)">
+            <summary>
+            Returns true if objects are equal
+            </summary>
+            <param name="obj">Object to be compared</param>
+            <returns>Boolean</returns>
+        </member>
+        <member name="M:IO.Swagger.Models.ApiResponse.Equals(IO.Swagger.Models.ApiResponse)">
+            <summary>
+            Returns true if ApiResponse instances are equal
+            </summary>
+            <param name="other">Instance of ApiResponse to be compared</param>
+            <returns>Boolean</returns>
+        </member>
+        <member name="M:IO.Swagger.Models.ApiResponse.GetHashCode">
+            <summary>
+            Gets the hash code
+            </summary>
+            <returns>Hash code</returns>
+        </member>
+        <member name="T:IO.Swagger.Models.Category">
+            <summary>
+            A category for a pet
+            </summary>
+        </member>
+        <member name="P:IO.Swagger.Models.Category.Id">
+            <summary>
+            Gets or Sets Id
+            </summary>
+        </member>
+        <member name="P:IO.Swagger.Models.Category.Name">
+            <summary>
+            Gets or Sets Name
+            </summary>
+        </member>
+        <member name="M:IO.Swagger.Models.Category.ToString">
+            <summary>
+            Returns the string presentation of the object
+            </summary>
+            <returns>String presentation of the object</returns>
+        </member>
+        <member name="M:IO.Swagger.Models.Category.ToJson">
+            <summary>
+            Returns the JSON string presentation of the object
+            </summary>
+            <returns>JSON string presentation of the object</returns>
+        </member>
+        <member name="M:IO.Swagger.Models.Category.Equals(System.Object)">
+            <summary>
+            Returns true if objects are equal
+            </summary>
+            <param name="obj">Object to be compared</param>
+            <returns>Boolean</returns>
+        </member>
+        <member name="M:IO.Swagger.Models.Category.Equals(IO.Swagger.Models.Category)">
+            <summary>
+            Returns true if Category instances are equal
+            </summary>
+            <param name="other">Instance of Category to be compared</param>
+            <returns>Boolean</returns>
+        </member>
+        <member name="M:IO.Swagger.Models.Category.GetHashCode">
+            <summary>
+            Gets the hash code
+            </summary>
+            <returns>Hash code</returns>
+        </member>
+        <member name="T:IO.Swagger.Models.Currency">
+            <summary>
+            some description 
+            </summary>
+        </member>
+        <member name="M:IO.Swagger.Models.Currency.ToString">
+            <summary>
+            Returns the string presentation of the object
+            </summary>
+            <returns>String presentation of the object</returns>
+        </member>
+        <member name="M:IO.Swagger.Models.Currency.ToJson">
+            <summary>
+            Returns the JSON string presentation of the object
+            </summary>
+            <returns>JSON string presentation of the object</returns>
+        </member>
+        <member name="M:IO.Swagger.Models.Currency.Equals(System.Object)">
+            <summary>
+            Returns true if objects are equal
+            </summary>
+            <param name="obj">Object to be compared</param>
+            <returns>Boolean</returns>
+        </member>
+        <member name="M:IO.Swagger.Models.Currency.Equals(IO.Swagger.Models.Currency)">
+            <summary>
+            Returns true if Currency instances are equal
+            </summary>
+            <param name="other">Instance of Currency to be compared</param>
+            <returns>Boolean</returns>
+        </member>
+        <member name="M:IO.Swagger.Models.Currency.GetHashCode">
+            <summary>
+            Gets the hash code
+            </summary>
+            <returns>Hash code</returns>
+        </member>
+        <member name="T:IO.Swagger.Models.Order">
+            <summary>
+            An order for a pets from the pet store
+            </summary>
+        </member>
+        <member name="P:IO.Swagger.Models.Order.Id">
+            <summary>
+            Gets or Sets Id
+            </summary>
+        </member>
+        <member name="P:IO.Swagger.Models.Order.PetId">
+            <summary>
+            Gets or Sets PetId
+            </summary>
+        </member>
+        <member name="P:IO.Swagger.Models.Order.Quantity">
+            <summary>
+            Gets or Sets Quantity
+            </summary>
+        </member>
+        <member name="P:IO.Swagger.Models.Order.ShipDate">
+            <summary>
+            Gets or Sets ShipDate
+            </summary>
+        </member>
+        <member name="T:IO.Swagger.Models.Order.StatusEnum">
+            <summary>
+            Order Status
+            </summary>
+            <value>Order Status</value>
+        </member>
+        <member name="F:IO.Swagger.Models.Order.StatusEnum.PlacedEnum">
+            <summary>
+            Enum PlacedEnum for placed
+            </summary>
+        </member>
+        <member name="F:IO.Swagger.Models.Order.StatusEnum.ApprovedEnum">
+            <summary>
+            Enum ApprovedEnum for approved
+            </summary>
+        </member>
+        <member name="F:IO.Swagger.Models.Order.StatusEnum.DeliveredEnum">
+            <summary>
+            Enum DeliveredEnum for delivered
+            </summary>
+        </member>
+        <member name="P:IO.Swagger.Models.Order.Status">
+            <summary>
+            Order Status
+            </summary>
+            <value>Order Status</value>
+        </member>
+        <member name="P:IO.Swagger.Models.Order.Complete">
+            <summary>
+            Gets or Sets Complete
+            </summary>
+        </member>
+        <member name="M:IO.Swagger.Models.Order.ToString">
+            <summary>
+            Returns the string presentation of the object
+            </summary>
+            <returns>String presentation of the object</returns>
+        </member>
+        <member name="M:IO.Swagger.Models.Order.ToJson">
+            <summary>
+            Returns the JSON string presentation of the object
+            </summary>
+            <returns>JSON string presentation of the object</returns>
+        </member>
+        <member name="M:IO.Swagger.Models.Order.Equals(System.Object)">
+            <summary>
+            Returns true if objects are equal
+            </summary>
+            <param name="obj">Object to be compared</param>
+            <returns>Boolean</returns>
+        </member>
+        <member name="M:IO.Swagger.Models.Order.Equals(IO.Swagger.Models.Order)">
+            <summary>
+            Returns true if Order instances are equal
+            </summary>
+            <param name="other">Instance of Order to be compared</param>
+            <returns>Boolean</returns>
+        </member>
+        <member name="M:IO.Swagger.Models.Order.GetHashCode">
+            <summary>
+            Gets the hash code
+            </summary>
+            <returns>Hash code</returns>
+        </member>
+        <member name="T:IO.Swagger.Models.Pet">
+            <summary>
+            A pet for sale in the pet store
+            </summary>
+        </member>
+        <member name="P:IO.Swagger.Models.Pet.Id">
+            <summary>
+            Gets or Sets Id
+            </summary>
+        </member>
+        <member name="P:IO.Swagger.Models.Pet.Category">
+            <summary>
+            Gets or Sets Category
+            </summary>
+        </member>
+        <member name="P:IO.Swagger.Models.Pet.Name">
+            <summary>
+            Gets or Sets Name
+            </summary>
+        </member>
+        <member name="P:IO.Swagger.Models.Pet.PhotoUrls">
+            <summary>
+            Gets or Sets PhotoUrls
+            </summary>
+        </member>
+        <member name="P:IO.Swagger.Models.Pet.Tags">
+            <summary>
+            Gets or Sets Tags
+            </summary>
+        </member>
+        <member name="T:IO.Swagger.Models.Pet.StatusEnum">
+            <summary>
+            pet status in the store
+            </summary>
+            <value>pet status in the store</value>
+        </member>
+        <member name="F:IO.Swagger.Models.Pet.StatusEnum.AvailableEnum">
+            <summary>
+            Enum AvailableEnum for available
+            </summary>
+        </member>
+        <member name="F:IO.Swagger.Models.Pet.StatusEnum.PendingEnum">
+            <summary>
+            Enum PendingEnum for pending
+            </summary>
+        </member>
+        <member name="F:IO.Swagger.Models.Pet.StatusEnum.SoldEnum">
+            <summary>
+            Enum SoldEnum for sold
+            </summary>
+        </member>
+        <member name="P:IO.Swagger.Models.Pet.Status">
+            <summary>
+            pet status in the store
+            </summary>
+            <value>pet status in the store</value>
+        </member>
+        <member name="M:IO.Swagger.Models.Pet.ToString">
+            <summary>
+            Returns the string presentation of the object
+            </summary>
+            <returns>String presentation of the object</returns>
+        </member>
+        <member name="M:IO.Swagger.Models.Pet.ToJson">
+            <summary>
+            Returns the JSON string presentation of the object
+            </summary>
+            <returns>JSON string presentation of the object</returns>
+        </member>
+        <member name="M:IO.Swagger.Models.Pet.Equals(System.Object)">
+            <summary>
+            Returns true if objects are equal
+            </summary>
+            <param name="obj">Object to be compared</param>
+            <returns>Boolean</returns>
+        </member>
+        <member name="M:IO.Swagger.Models.Pet.Equals(IO.Swagger.Models.Pet)">
+            <summary>
+            Returns true if Pet instances are equal
+            </summary>
+            <param name="other">Instance of Pet to be compared</param>
+            <returns>Boolean</returns>
+        </member>
+        <member name="M:IO.Swagger.Models.Pet.GetHashCode">
+            <summary>
+            Gets the hash code
+            </summary>
+            <returns>Hash code</returns>
+        </member>
+        <member name="T:IO.Swagger.Models.Tag">
+            <summary>
+            A tag for a pet
+            </summary>
+        </member>
+        <member name="P:IO.Swagger.Models.Tag.Id">
+            <summary>
+            Gets or Sets Id
+            </summary>
+        </member>
+        <member name="P:IO.Swagger.Models.Tag.Name">
+            <summary>
+            Gets or Sets Name
+            </summary>
+        </member>
+        <member name="M:IO.Swagger.Models.Tag.ToString">
+            <summary>
+            Returns the string presentation of the object
+            </summary>
+            <returns>String presentation of the object</returns>
+        </member>
+        <member name="M:IO.Swagger.Models.Tag.ToJson">
+            <summary>
+            Returns the JSON string presentation of the object
+            </summary>
+            <returns>JSON string presentation of the object</returns>
+        </member>
+        <member name="M:IO.Swagger.Models.Tag.Equals(System.Object)">
+            <summary>
+            Returns true if objects are equal
+            </summary>
+            <param name="obj">Object to be compared</param>
+            <returns>Boolean</returns>
+        </member>
+        <member name="M:IO.Swagger.Models.Tag.Equals(IO.Swagger.Models.Tag)">
+            <summary>
+            Returns true if Tag instances are equal
+            </summary>
+            <param name="other">Instance of Tag to be compared</param>
+            <returns>Boolean</returns>
+        </member>
+        <member name="M:IO.Swagger.Models.Tag.GetHashCode">
+            <summary>
+            Gets the hash code
+            </summary>
+            <returns>Hash code</returns>
+        </member>
+        <member name="T:IO.Swagger.Models.User">
+            <summary>
+            A User who is purchasing from the pet store
+            </summary>
+        </member>
+        <member name="P:IO.Swagger.Models.User.Id">
+            <summary>
+            Gets or Sets Id
+            </summary>
+        </member>
+        <member name="P:IO.Swagger.Models.User.Username">
+            <summary>
+            Gets or Sets Username
+            </summary>
+        </member>
+        <member name="P:IO.Swagger.Models.User.FirstName">
+            <summary>
+            Gets or Sets FirstName
+            </summary>
+        </member>
+        <member name="P:IO.Swagger.Models.User.LastName">
+            <summary>
+            Gets or Sets LastName
+            </summary>
+        </member>
+        <member name="P:IO.Swagger.Models.User.Email">
+            <summary>
+            Gets or Sets Email
+            </summary>
+        </member>
+        <member name="P:IO.Swagger.Models.User.Password">
+            <summary>
+            Gets or Sets Password
+            </summary>
+        </member>
+        <member name="P:IO.Swagger.Models.User.Phone">
+            <summary>
+            Gets or Sets Phone
+            </summary>
+        </member>
+        <member name="P:IO.Swagger.Models.User.UserStatus">
+            <summary>
+            User Status
+            </summary>
+            <value>User Status</value>
+        </member>
+        <member name="M:IO.Swagger.Models.User.ToString">
+            <summary>
+            Returns the string presentation of the object
+            </summary>
+            <returns>String presentation of the object</returns>
+        </member>
+        <member name="M:IO.Swagger.Models.User.ToJson">
+            <summary>
+            Returns the JSON string presentation of the object
+            </summary>
+            <returns>JSON string presentation of the object</returns>
+        </member>
+        <member name="M:IO.Swagger.Models.User.Equals(System.Object)">
+            <summary>
+            Returns true if objects are equal
+            </summary>
+            <param name="obj">Object to be compared</param>
+            <returns>Boolean</returns>
+        </member>
+        <member name="M:IO.Swagger.Models.User.Equals(IO.Swagger.Models.User)">
+            <summary>
+            Returns true if User instances are equal
+            </summary>
+            <param name="other">Instance of User to be compared</param>
+            <returns>Boolean</returns>
+        </member>
+        <member name="M:IO.Swagger.Models.User.GetHashCode">
+            <summary>
+            Gets the hash code
+            </summary>
+            <returns>Hash code</returns>
+        </member>
+    </members>
+</doc>
