@@ -14,7 +14,7 @@ using Microsoft.OpenApi.CSharpAnnotations.DocumentGeneration.Models;
 using Microsoft.OpenApi.Extensions;
 using Newtonsoft.Json;
 
-namespace openapi_demo
+namespace AzureFunctionsOpenAPIDemo
 {
     public class Function1
     {
