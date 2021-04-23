@@ -1,28 +1,26 @@
-using System;
-using System.IO;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using System.Collections.Generic;
-using System.Net.Http;
-using System.Net;
-using System.Xml.Linq;
+using System.IO;
 using System.Linq;
-using System.Text;
+using System.Net;
+using System.Threading.Tasks;
+using System.Web;
+using System.Xml.Linq;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
-using System.Web;
+using Microsoft.Extensions.Logging;
+using Microsoft.OpenApi;
+using Microsoft.OpenApi.CSharpAnnotations.DocumentGeneration;
+using Microsoft.OpenApi.CSharpAnnotations.DocumentGeneration.Models;
+using Microsoft.OpenApi.Extensions;
+using Newtonsoft.Json;
 
-namespace AzureFunctionsOpenAPIDemo
+namespace openapi_demo
 {
-
-    //TODO: https://github.com/microsoft/OpenAPI.NET.CSharpAnnotations/issues/159
-    //TODO: Security: v2 v3 https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#securityDefinitionsObject
-
     public class Function1
     {
-        [Function("FunctionDefault")]
-        public async Task<HttpResponseData> Run([HttpTrigger(AuthorizationLevel.Function, "get", "post")] HttpRequestData req, FunctionContext executionContext)
+        [Function("Function1")]
+        public async Task<HttpResponseData> Run([HttpTrigger(AuthorizationLevel.Function, "get", "post")] HttpRequestData req,
+            FunctionContext executionContext)
         {
             var log = executionContext.GetLogger<Function1>();
 
@@ -46,64 +44,80 @@ namespace AzureFunctionsOpenAPIDemo
             return response;
         }
 
-        // [Function("Swagger")]
-        // public async Task<HttpResponseData> RunSwagger([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)] HttpRequestData req, FunctionContext executionContext)
-        // {
-        //     var input = new OpenApiGeneratorConfig(
-        //         annotationXmlDocuments: new List<XDocument>()
-        //         {
-        //             XDocument.Load(@"AzureFunctionsOpenAPIDemo.xml"),
-        //         },
-        //         assemblyPaths: new List<string>()
-        //         {
-        //             @"bin\AzureFunctionsOpenAPIDemo.dll"
-        //         },
-        //         openApiDocumentVersion: "V1",
-        //         filterSetVersion: FilterSetVersion.V1
-        //     );
-        //     input.OpenApiInfoDescription = "This is a sample description...";
 
-        //     var generator = new OpenApiGenerator();
-        //     var openApiDocuments = generator.GenerateDocuments(
-        //         openApiGeneratorConfig: input,
-        //         generationDiagnostic: out GenerationDiagnostic result
-        //     );
+        [Function("SwaggerUI")]
+        public async Task<HttpResponseData> SwaggerUi([HttpTrigger(AuthorizationLevel.Function, "get")] HttpRequestData req,
+            FunctionContext executionContext)
+        {
+            var log = executionContext.GetLogger<Function1>();
 
-        //     var response = req.CreateResponse(HttpStatusCode.OK);
-        //     response.Headers.Add("Content", "Content-Type: application/json; charset=utf-8");
-        //     response.WriteString(openApiDocuments.First().Value.SerializeAsJson(OpenApiSpecVersion.OpenApi3_0));
+            var page = System.IO.File.ReadAllText(@"Pages\swagger-ui.html");
 
-        //     return response;
-        // }
+            var response = req.CreateResponse(HttpStatusCode.OK);
+            response.Headers.Add("Content", "Content-Type: text/html; charset=utf-8");
+            response.WriteString(page);
 
-        // [Function("SwaggerV2")]
-        // public async Task<HttpResponseData> RunSwagger2([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)] HttpRequestData req, FunctionContext executionContext)
-        // {
-        //     var input = new OpenApiGeneratorConfig(
-        //         annotationXmlDocuments: new List<XDocument>()
-        //         {
-        //             XDocument.Load(@"AzureFunctionsOpenAPIDemo.xml"),
-        //         },
-        //         assemblyPaths: new List<string>()
-        //         {
-        //             @"bin\AzureFunctionsOpenAPIDemo.dll"
-        //         },
-        //         openApiDocumentVersion: "V1",
-        //         filterSetVersion: FilterSetVersion.V1
-        //     );
-        //     input.OpenApiInfoDescription = "This is a sample description...";
+            return response;
+        }
 
-        //     var generator = new OpenApiGenerator();
-        //     var openApiDocuments = generator.GenerateDocuments(
-        //         openApiGeneratorConfig: input,
-        //         generationDiagnostic: out GenerationDiagnostic result
-        //     );
+        [Function("Swagger")]
+        public async Task<HttpResponseData> RunSwagger([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)] HttpRequestData req, FunctionContext executionContext)
+        {
+            var input = new OpenApiGeneratorConfig(
+                annotationXmlDocuments: new List<XDocument>()
+                {
+                    XDocument.Load(@"AzureFunctionsOpenAPIDemo.xml"),
+                },
+                assemblyPaths: new List<string>()
+                {
+                    @"AzureFunctionsOpenAPIDemo.dll"
+                },
+                openApiDocumentVersion: "V1",
+                filterSetVersion: FilterSetVersion.V1
+            );
+            input.OpenApiInfoDescription = "This is a sample description...";
 
-        //     var response = req.CreateResponse(HttpStatusCode.OK);
-        //     response.Headers.Add("Content", "Content-Type: application/json; charset=utf-8");
-        //     response.WriteString(openApiDocuments.First().Value.SerializeAsJson(OpenApiSpecVersion.OpenApi2_0));
+            var generator = new OpenApiGenerator();
+            var openApiDocuments = generator.GenerateDocuments(
+                openApiGeneratorConfig: input,
+                generationDiagnostic: out GenerationDiagnostic result
+            );
 
-        //     return response;
-        // }
+            var response = req.CreateResponse(HttpStatusCode.OK);
+            response.Headers.Add("Content", "Content-Type: application/json; charset=utf-8");
+            response.WriteString(openApiDocuments.First().Value.SerializeAsJson(OpenApiSpecVersion.OpenApi3_0));
+
+            return response;
+        }
+
+        [Function("SwaggerV2")]
+        public async Task<HttpResponseData> RunSwagger2([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)] HttpRequestData req, FunctionContext executionContext)
+        {
+            var input = new OpenApiGeneratorConfig(
+                annotationXmlDocuments: new List<XDocument>()
+                {
+                    XDocument.Load(@"AzureFunctionsOpenAPIDemo.xml"),
+                },
+                assemblyPaths: new List<string>()
+                {
+                    @"AzureFunctionsOpenAPIDemo.dll"
+                },
+                openApiDocumentVersion: "V1",
+                filterSetVersion: FilterSetVersion.V1
+            );
+            input.OpenApiInfoDescription = "This is a sample description...";
+
+            var generator = new OpenApiGenerator();
+            var openApiDocuments = generator.GenerateDocuments(
+                openApiGeneratorConfig: input,
+                generationDiagnostic: out GenerationDiagnostic result
+            );
+
+            var response = req.CreateResponse(HttpStatusCode.OK);
+            response.Headers.Add("Content", "Content-Type: application/json; charset=utf-8");
+            response.WriteString(openApiDocuments.First().Value.SerializeAsJson(OpenApiSpecVersion.OpenApi2_0));
+
+            return response;
+        }
     }
 }
