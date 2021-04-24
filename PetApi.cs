@@ -9,6 +9,7 @@ using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using System.Net;
 using System.Web;
+using AzureFunctionsOpenAPIDemo.ViewModel;
 
 namespace AzureFunctionsOpenAPIDemo
 {
